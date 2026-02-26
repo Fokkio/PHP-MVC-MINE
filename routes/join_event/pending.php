@@ -10,10 +10,11 @@ if (empty($_SESSION['user_id'])) {
 }
 
 try {
-    $checkin = getCheckInStatusByJoinEventId($joinEventId);
+    // อัปเดตสถานะเป็น PENDING
     $success = updateJoinStatus($joinEventId, JoinStatus::PENDING->value);
 
-    if ($success && $checkin['checkin_status']) {
+    // แก้ไข: ตรวจสอบแค่ว่าฟังก์ชันอัปเดตทำงานสำเร็จหรือไม่ก็พอ
+    if ($success) {
         header("Location: /events/$eventId/participants");
         exit;
     } else {
