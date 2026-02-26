@@ -46,7 +46,7 @@ function deleteImagesByEventId($eventId)
 
 
 function uploadToCloudinary(string $imageTmpPath, string $uploadPreset): ?array {
-    $cloudName = $_ENV['CLOUDINARY_CLOUD_NAME']; // ใส่ Cloud Name ของคุณตรงนี้เลย
+    $cloudName = $_ENV['CLOUDINARY_CLOUD_NAME']; 
     $url = $_ENV['IMAGE_CLOUD_URL'] . "/$cloudName/image/upload";
 
     $ch = curl_init();
@@ -75,36 +75,26 @@ function uploadToCloudinary(string $imageTmpPath, string $uploadPreset): ?array 
 }
 
 function deleteFromCloudinary(string $publicId): bool {
-    // 1. ตั้งค่า Config (ต้องไปเอาจาก Dashboard ของ Cloudinary)
-    $cloudName = 'dc2hlh7p9'; 
-    $apiKey = 'YOUR_API_KEY';       // <--- ต้องใส่ API Key
-    $apiSecret = 'YOUR_API_SECRET'; // <--- ต้องใส่ API Secret
-
+    $cloudName = $_ENV['CLOUDINARY_CLOUD_NAME'];
+    $apiKey = $_ENV['CLOUDINARY_API_KEY'];
+    $apiSecret = $_ENV['CLOUDINARY_API_SECRET'];
     $url = $_ENV['IMAGE_CLOUD_URL'] . "/$cloudName/image/destroy";
     $timestamp = time();
-
-    // 2. สร้าง Signature (ลายเซ็นดิจิทัลเพื่อยืนยันว่าเราเป็นเจ้าของบัญชี)
-    // สูตรคือ: เอาพารามิเตอร์มาเรียงกัน + ต่อท้ายด้วย API Secret + แปลงเป็น SHA1
     $paramsToSign = [
         'public_id' => $publicId,
         'timestamp' => $timestamp
     ];
     
-    // เรียงลำดับพารามิเตอร์ตามตัวอักษร (Cloudinary บังคับ)
     ksort($paramsToSign);
 
-    // ต่อ String เข้าด้วยกัน
     $strToSign = "";
     foreach ($paramsToSign as $key => $value) {
         $strToSign .= "{$key}={$value}&";
     }
-    // ลบ & ตัวสุดท้ายออก แล้วต่อด้วย API Secret
     $strToSign = rtrim($strToSign, '&') . $apiSecret;
 
-    // แปลงเป็น Hash SHA1
     $signature = sha1($strToSign);
 
-    // 3. เตรียมข้อมูลส่ง POST
     $postData = [
         'public_id' => $publicId,
         'api_key' => $apiKey,
@@ -112,7 +102,6 @@ function deleteFromCloudinary(string $publicId): bool {
         'signature' => $signature
     ];
 
-    // 4. ยิง Request ด้วย cURL
     $ch = curl_init();
     curl_setopt($ch, CURLOPT_URL, $url);
     curl_setopt($ch, CURLOPT_POST, 1);
@@ -122,10 +111,8 @@ function deleteFromCloudinary(string $publicId): bool {
     $response = curl_exec($ch);
     curl_close($ch);
 
-    // 5. เช็คผลลัพธ์
     $result = json_decode($response, true);
 
-    // ถ้าลบสำเร็จ Cloudinary จะตอบกลับมาว่า result = ok
     if (isset($result['result']) && $result['result'] === 'ok') {
         return true;
     }
