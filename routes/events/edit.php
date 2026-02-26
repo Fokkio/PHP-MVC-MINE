@@ -21,7 +21,7 @@ if (!$event) {
 }
 
 // ตรวจสอบสิทธิ์ว่าเป็นเจ้าของกิจกรรมจริงไหม (ใช้ $event['id'] ได้แล้วเพราะดึงข้อมูลมาแล้ว)
-creatorcheck($event['id'], '/events');
+creatorcheck($event['creator_id'], '/events');
 
 // --- แยกการทำงานตาม Method ---
 
@@ -83,3 +83,4 @@ if ($method === 'GET') {
     notFound();
     exit;
 }
+
