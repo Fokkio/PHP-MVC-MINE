@@ -8,7 +8,7 @@ $id     = $context['id'];
 $cloudinaryPreset = 'project1';
 
 // ตรวจสอบว่าเป็นเจ้าของกิจกรรมจริงไหม
-creatorcheck($event['creator_id'], '/events');
+creatorcheck($event['id'], '/events');
 
 if ($method === 'GET') {
     $event = getEventById($id);
@@ -61,3 +61,4 @@ if ($method === 'GET') {
 } else {
     notFound();
 }
+
