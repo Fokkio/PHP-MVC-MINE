@@ -1,4 +1,4 @@
- <?php
+<?php
     $method = $context['method'];
     if ($method === 'GET') {
         renderView('login', ['title' => 'Login']);
@@ -30,3 +30,4 @@
     } else {
         notFound();
     }
+
