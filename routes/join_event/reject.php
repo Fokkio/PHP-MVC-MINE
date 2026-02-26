@@ -11,8 +11,7 @@ if (empty($_SESSION['user_id'])) {
 
 try {
     $success = updateJoinStatus($joinEventId, JoinStatus::REJECTED->value);
-
-    if ($success && $checkin['checkin_status']) {
+    if ($success) {
         header("Location: /events/$eventId/participants");
         exit;
     } else {
