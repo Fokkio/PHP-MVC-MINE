@@ -14,15 +14,15 @@
     <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
         <div class="bg-white p-6 rounded-2xl shadow-sm border border-l-4 border-blue-500">
             <p class="text-sm font-medium text-gray-500 uppercase">ลงทะเบียน</p>
-            <p class="text-3xl font-bold mt-2"><?= number_format($stats['total_joined']) ?> <span class="text-sm font-normal text-gray-400">คน</span></p>
+            <p class="text-3xl font-bold mt-2"><?= number_format($stats['total_joined'] ?? 0) ?> <span class="text-sm font-normal text-gray-400">คน</span></p>
         </div>
         <div class="bg-white p-6 rounded-2xl shadow-sm border border-l-4 border-green-500">
             <p class="text-sm font-medium text-gray-500 uppercase">อนุมัติแล้ว</p>
-            <p class="text-3xl font-bold mt-2"><?= number_format($stats['total_approved']) ?> <span class="text-sm font-normal text-gray-400">คน</span></p>
+            <p class="text-3xl font-bold mt-2"><?= number_format($stats['total_approved'] ?? 0) ?> <span class="text-sm font-normal text-gray-400">คน</span></p>
         </div>
         <div class="bg-white p-6 rounded-2xl shadow-sm border border-l-4 border-purple-500">
             <p class="text-sm font-medium text-gray-500 uppercase">เช็คอินแล้ว</p>
-            <p class="text-3xl font-bold mt-2"><?= number_format($stats['total_checked_in']) ?> <span class="text-sm font-normal text-gray-400">คน</span></p>
+            <p class="text-3xl font-bold mt-2"><?= number_format($stats['total_checked_in'] ?? 0) ?> <span class="text-sm font-normal text-gray-400">คน</span></p>
         </div>
     </div>
 
@@ -58,12 +58,17 @@
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
+    // เพิ่ม ?? 0 ในส่วนของข้อมูลกราฟด้วย เพื่อความปลอดภัยและถูกต้อง 100%
     new Chart(document.getElementById('genderChart'), {
         type: 'doughnut',
         data: {
             labels: ['ชาย', 'หญิง', 'อื่นๆ'],
             datasets: [{
-                data: [<?= (int)$stats['male_count'] ?>, <?= (int)$stats['female_count'] ?>, <?= (int)$stats['other_count'] ?>],
+                data: [
+                    <?= (int)($stats['male_count'] ?? 0) ?>, 
+                    <?= (int)($stats['female_count'] ?? 0) ?>, 
+                    <?= (int)($stats['other_count'] ?? 0) ?>
+                ],
                 backgroundColor: ['#3B82F6', '#EF4444', '#10B981'],
                 borderWidth: 0
             }]
@@ -78,11 +83,11 @@
             datasets: [{
                 label: 'จำนวนคน',
                 data: [
-                    <?= (int)$stats['age_under_18'] ?>, 
-                    <?= (int)$stats['age_18_24'] ?>, 
-                    <?= (int)$stats['age_25_34'] ?>, 
-                    <?= (int)$stats['age_35_44'] ?>, 
-                    <?= (int)$stats['age_45_plus'] ?>
+                    <?= (int)($stats['age_under_18'] ?? 0) ?>, 
+                    <?= (int)($stats['age_18_24'] ?? 0) ?>, 
+                    <?= (int)($stats['age_25_34'] ?? 0) ?>, 
+                    <?= (int)($stats['age_35_44'] ?? 0) ?>, 
+                    <?= (int)($stats['age_45_plus'] ?? 0) ?>
                 ],
                 backgroundColor: '#F59E0B',
                 borderRadius: 5
@@ -101,7 +106,11 @@
         data: {
             labels: ['Registered', 'Approved', 'Checked-in'],
             datasets: [{
-                data: [<?= (int)$stats['total_joined'] ?>, <?= (int)$stats['total_approved'] ?>, <?= (int)$stats['total_checked_in'] ?>],
+                data: [
+                    <?= (int)($stats['total_joined'] ?? 0) ?>, 
+                    <?= (int)($stats['total_approved'] ?? 0) ?>, 
+                    <?= (int)($stats['total_checked_in'] ?? 0) ?>
+                ],
                 backgroundColor: ['#3B82F6', '#10B981', '#8B5CF6'],
                 borderRadius: 8,
                 barThickness: 50
