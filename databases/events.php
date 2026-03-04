@@ -98,7 +98,7 @@ function createEvent(
         throw new Exception("Event start time must be in the future");
     }*/
     $stmt->bind_param(
-        "ssssi",
+        "ssssii",
         $name,
         $description,
         $event_start,
