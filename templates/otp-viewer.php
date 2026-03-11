@@ -35,39 +35,50 @@
 </div>
 
 <script>
-
     document.addEventListener("DOMContentLoaded", function() {
         // Countdown Logic
-        let remaining = <?= (int)$remaining ?>; 
+        let remaining = <?= (int)$remaining ?>;
         const countdownEl = document.getElementById('countdown');
+        let countdownTimer; // สร้างตัวแปรมาเก็บอ้างอิงของ Interval
 
         function updateCountdown() {
             if (remaining <= 0) {
-                countdownEl.innerText = "หมดอายุแล้ว";
-                setTimeout(() => { window.location.reload(); }, 1000);
+                countdownEl.innerText = "หมดอายุแล้ว กำลังโหลดรหัสใหม่...";
+                clearInterval(countdownTimer); // 🛑 หยุดการทำงานของ Interval ทันที ป้องกัน loop รัวๆ
+
+                setTimeout(() => {
+                    // 🔄 รีโหลดหน้าใหม่โดยเพิ่ม query parameter เป็น timestamp ป้องกัน Browser ดึง Cache เก่ามาแสดง
+                    const currentUrl = new URL(window.location.href);
+                    currentUrl.searchParams.set('t', new Date().getTime());
+                    window.location.href = currentUrl.toString();
+                }, 1000);
+
                 return;
             }
+
             let mins = Math.floor(remaining / 60);
             let secs = remaining % 60;
             countdownEl.innerText = `${mins} นาที ${secs < 10 ? '0' : ''}${secs} วินาที`;
             remaining--;
         }
+
         updateCountdown();
-        setInterval(updateCountdown, 1000);
+        // กำหนด Interval ให้กับตัวแปรที่สร้างไว้
+        countdownTimer = setInterval(updateCountdown, 1000);
 
         // Polling (ตรวจสอบสถานะเช็คอินอัตโนมัติ)
         const join_event_id = <?= (int)$participant['join_event_id'] ?>;
         setInterval(() => {
-    fetch(`/events/client-verify-checkin?join_event_id=${join_event_id}`)
-    .then(res => res.json())
-    .then(data => {
-        if(data.status === "FOUND"){
-            window.location.href = `/events/<?= $eventId ?>/detail?success=1`;
-        }
-    })
-    .catch(err => {
-        console.error("Polling error:", err);
-    });
-}, 3000);
+            fetch(`/events/client-verify-checkin?join_event_id=${join_event_id}`)
+                .then(res => res.json())
+                .then(data => {
+                    if (data.status === "FOUND") {
+                        window.location.href = `/events/<?= $eventId ?>/detail?success=1`;
+                    }
+                })
+                .catch(err => {
+                    console.error("Polling error:", err);
+                });
+        }, 3000);
     });
 </script>
