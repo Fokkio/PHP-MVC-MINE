@@ -132,10 +132,11 @@ function getEventByKeyword($keyword)
             WHERE LOWER(e.event_name) LIKE LOWER(?)
                OR LOWER(e.event_description) LIKE LOWER(?)
                OR LOWER(u.name) LIKE LOWER(?)
+               OR e.event_start LIKE ?
             ORDER BY e.event_start DESC";
 
     $stmt = $connection->prepare($sql);
-    $stmt->bind_param("sss", $search, $search, $search);
+    $stmt->bind_param("ssss", $search, $search, $search, $search);
     $stmt->execute();
     $result = $stmt->get_result();
 
