@@ -1,6 +1,6 @@
 <?php
 
-$OTP_DURATION = 60; // 60 seconds
+$OTP_DURATION = 180; // 60 seconds
 
 function generateSecret($length = 16)
 {
